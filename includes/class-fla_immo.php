@@ -156,6 +156,14 @@ class Fla_immo {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		
+
+		//create new user role 'immo manager' 
+		$this->loader->add_action( 'init', $plugin_admin, 'fla_immo_add_role' );
+		$this->loader->add_action( 'init', $plugin_admin, 'create_agence_immo_post_type' );
+		$this->loader->add_action( 'init', $plugin_admin, 'create_annonce_immo_post_type' );
+		$this->loader->add_action( 'init', $plugin_admin, 'generate_acf_for_agencies_and_annonces' );
+		
 
 	}
 
@@ -172,6 +180,9 @@ class Fla_immo {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+
+		//widgets shortcode
+		$this->loader->add_action( 'init', $plugin_public, 'fla_immo_register_shortcodes' );
 
 	}
 
