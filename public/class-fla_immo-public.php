@@ -108,33 +108,76 @@ class Fla_immo_Public {
 
 	Public function fla_immo_search_fillter_widget()
 	{
+		$field_type_offre = get_field_object('field_5ce4ab532635e');
+		$type_doffre_choices = $field_type_offre['choices'];
+
+		$field_type_transac = get_field_object('field_5ce4ab102635d');
+		$type_dtransac_choices = $field_type_transac['choices'];
+
+		$field_secteur = get_field_object('field_5ce4ac1626361');
+		$secteur_choices = $field_secteur['choices'];
+		//var_dump($type_doffre_choices);
+		
+
+		$type_d_offre = isset($_GET['type_d_offre']) ? $_GET['type_d_offre'] : '';
+		$transaction = isset($_GET['transaction']) ? $_GET['transaction'] : '';
+		$secteur = isset($_GET['secteur']) ? $_GET['secteur'] : '';
+		$surface_min = isset($_GET['surface_min']) ? $_GET['surface_min'] : '';
+		$surface_max = isset($_GET['surface_max']) ? $_GET['surface_max'] : '';
+		$mots_cles = isset($_GET['mots_cles']) ? $_GET['mots_cles'] : '';
+
 		?>
 		<form id="fl_immo_search_form">
 		<div>
 			<label for="type_d_offre">Type d'offre</label>
 			<select name="type_d_offre">
-				<option value="tout">Tout</option>
-				<option value="lld">Location longue durée</option>
-				<option value="lcd">Location courte durée</option>
-				<option value="vente">Vente</option>
+				<option value="tous"  <?php if( $type_d_offre == "tous" ): ?> selected="selected"<?php endif; ?>>Tous</option>
+				<?php
+					foreach ($type_doffre_choices as $value => $label) {
+						?>
+							<option value="<?php echo $value ?>"  <?php if( $type_d_offre == $value ): ?> selected="selected"<?php endif; ?>><?php echo $label ?></option>
+						<?php
+					}
+				?>
+	
 			</select>
 		</div>
 		<div>
 			<label for="transaction">Type de transaction</label>
-			<input type="text" name="transaction" id="transaction">
+			<select name="transaction">
+				<option value="tous"  <?php if( $transaction == "tous" ): ?> selected="selected"<?php endif; ?>>Tous</option>
+				<?php
+					foreach ($type_dtransac_choices as $value => $label) {
+						?>
+							<option value="<?php echo $value ?>"  <?php if( $transaction == $value ): ?> selected="selected"<?php endif; ?>><?php echo $label ?></option>
+						<?php
+					}
+				?>
+	
+			</select>
 		</div>
 		<div>
 			<label for="secteur">Secteur</label>
-			<input type="text" name="secteur" id="secteur">
+			<select name="secteur">
+				<option value="tous"  <?php if( $secteur == "tous" ): ?> selected="selected"<?php endif; ?>>Tous</option>
+				<?php
+					foreach ($secteur_choices as $value => $label) {
+						?>
+							<option value="<?php echo $value ?>"  <?php if( $secteur == $value ): ?> selected="selected"<?php endif; ?>><?php echo $label ?></option>
+						<?php
+					}
+				?>
+	
+			</select>
 		</div>
 		<div>
-			<label for="secteur">Surface</label>
-			<input type="text" name="surface_min" id="surface_min" placeholder="min">
-			<input type="text" name="surface_max" id="surface_max" placeholder="max">
+			<label for="surface">Surface</label>
+			<input type="text" name="surface_min" id="surface_min" placeholder="min" value="<?php echo $surface_min ?>">
+			<input type="text" name="surface_max" id="surface_max" placeholder="max" value="<?php echo $surface_max ?>">
 		</div>
 		<div>
-			<label for="secteur">Mots clés</label>
-			<input type="text" name="mots_cles" id="mots_cles" placeholder="min">
+			<label for="mots_cles">Mots clés</label>
+			<input type="text" name="mots_cles" id="mots_cles" placeholder="villa..." value="<?php echo $mots_cles ?>">
 		</div>
 
 		<div><button>Rechercher</button></div>
@@ -144,6 +187,12 @@ class Fla_immo_Public {
 
 	Public function fla_immo_search_result_widget()
 	{
+		$type_d_offre = isset($_GET['type_d_offre']) ? $_GET['type_d_offre'] : '';
+		$transaction = isset($_GET['transaction']) ? $_GET['transaction'] : '';
+		$secteur = isset($_GET['secteur']) ? $_GET['secteur'] : '';
+		$surface_min = isset($_GET['surface_min']) ? $_GET['surface_min'] : '';
+		$surface_max = isset($_GET['surface_max']) ? $_GET['surface_max'] : '';
+		$mots_cles = isset($_GET['mots_cles']) ? $_GET['mots_cles'] : '';
 		// WP_Query arguments
 		$args = array (
 			'post_type'              => array( 'fla_immo_offers' ),
@@ -156,29 +205,57 @@ class Fla_immo_Public {
 		$metaquery_arr = array(
 			'relation'		=> 'AND'
 		);
-		// if ($type_de_contrat != "" && $type_de_contrat != "tout") {
-		// 	# code...
-		// 	$metaquery_arr[] = array(
-		// 		'key'		=> 'type_de_contrat',
-		// 		'value'		=> $type_de_contrat,
-		// 		'compare'	=> '='
-		// 	);
-		// 	$args['meta_query'] = $metaquery_arr;
-		// 	// $args['meta_key'] = 'type_de_contrat';
-		// 	// $args['meta_value'] = $type_de_contrat;
-			
-		// }
-		// if ($fonction != "" && $fonction != "tout") {
-		// 	# code...
-		// 	$metaquery_arr[] = array(
-		// 		'key'		=> 'fonction',
-		// 		'value'		=> $fonction,
-		// 		'compare'	=> '='
-		// 	);
-		// 	$args['meta_query'] = $metaquery_arr;
-			
-		// }
-		//var_dump($args);
+		if ($type_d_offre != "" && $type_d_offre != "tous") {
+			# code...
+			$metaquery_arr[] = array(
+				'key'		=> 'type_doffre',
+				'value'		=> $type_d_offre,
+				'compare'	=> '='
+			);
+		}
+		if ($transaction != "" && $transaction != "tous") {
+			# code...
+			$metaquery_arr[] = array(
+				'key'		=> 'type_de_transaction',
+				'value'		=> $transaction,
+				'compare'	=> '='
+			);
+		}
+		if ($secteur != "" && $secteur != "tous") {
+			# code...
+			$metaquery_arr[] = array(
+				'key'		=> 'secteur',
+				'value'		=> $secteur,
+				'compare'	=> '='
+			);
+		}
+		if ($surface_min != "" || $surface_max != "") {
+			# code...
+			$surface_min = ($surface_min != "")?(int)$surface_min:0;
+			$surface_max = ($surface_max != "")?(int)$surface_max:999999999;
+			$metaquery_arr[] = array(
+				'key'		=> 'surface',
+				'value'		=> array($surface_min, $surface_max),
+				'compare' => 'BETWEEN',
+				'type' => 'NUMERIC'
+			);
+		}
+		
+		if ($mots_cles != "" ) {
+			# code...
+			$args['search_title'] = $mots_cles;
+			// $metaquery_arr[] = array(
+			// 	'key'		=> 'description',
+			// 	'value'		=> $mots_cles,
+			// 	'compare' => 'LIKE',
+			// 	'type' => 'TEXT'
+			// );
+		}
+
+
+
+
+		$args['meta_query'] = $metaquery_arr;
 		// The Query
 		$offres_immo = new WP_Query( $args );
 		//var_dump($offres_immo);
@@ -192,31 +269,24 @@ class Fla_immo_Public {
 				<?php
 			while ( $offres_immo->have_posts() ) {
 				$offres_immo->the_post();
+				if (get_post_type() != 'fla_immo_offers') {
+					continue;
+				}
 				?>
-				
-					<div class="result_item">
-						<a href="<?php the_permalink(); ?>">
-							<div>
-								<h3><?php the_title(); ?></h3>
-								<em><?php echo get_the_modified_date(); ?></em>
-								<h5><?php the_field('type_doffre') ?></h5>
-								<h5><?php the_field('secteur') ?></h5>
-								<img style="height: 100px;" src="<?php echo get_field('gallerie')['url']; ?>" />
-								<?php 
-								$agences = get_field('agence');
-								var_dump($agences);
-								// if( $agences ): ?>
-								 	<?php //foreach( $agences as $p): // variable must be called $p (IMPORTANT)
-								// 		//var_dump($p);
-								// 		?>
-								 			<h2><?php// echo get_the_title($p->ID); ?></h2>
-								 	<?php //endforeach; ?>
-									
-								 <?php //endif; 
-								// ?>
-								<p><?php echo substr(get_field('description'),0,120).'...';  ?></p>
-							</div>
-						</a>
+					<div class="card">
+						<div class="card-image">
+							<img src="<?php echo get_field('gallerie')['url']; ?>">
+							<a class="btn-floating halfway-fab waves-effect waves-light red" href="<?php the_permalink(); ?>"><i class="material-icons">add</i></a>
+						</div>
+						<div class="card-content">
+							<span class="card-title"><?php the_title(); ?></span>
+							<p><?php echo (substr(get_field('description'),0,120).'...');  ?></p>
+
+								<span><?php echo get_field('surface') ?> m²,</span>
+								<span style="font-weight:bold;"><?php echo get_field('secteur')['label'] ?></span>
+								<span class="new badge red" data-badge-caption="€"><?php echo get_field('prix') ?></span>
+							
+						</div>
 					</div>
 				
 				<?php
@@ -230,5 +300,48 @@ class Fla_immo_Public {
 		// Restore original Post Data
 		wp_reset_postdata();
 	}//end function of shortcode
+
+	public function fla_immo_single_custom_post_template($single) {
+
+		global $post;
+
+		/* Checks for single template by post type */
+		if ( $post->post_type == 'fla_immo_offers' ) {
+			
+			if ( file_exists( plugin_dir_path( __FILE__ ) . 'partials/offre-immo-single.php' ) ) {
+				return plugin_dir_path( __FILE__ ) . 'partials/offre-immo-single.php';
+			}
+		}
+
+		if ( $post->post_type == 'fla_immo_agencies' ) {
+			
+			if ( file_exists( plugin_dir_path( __FILE__ ) . 'partials/agence-immo-single.php' ) ) {
+				return plugin_dir_path( __FILE__ ) . 'partials/agence-immo-single.php';
+			}
+		}
+
+		// if ( $post->post_type == 'fla_sollicitation' ) {
+			
+		// 	if ( file_exists( plugin_dir_path( __FILE__ ) . 'partials/sollicitation-single.php' ) ) {
+		// 		return plugin_dir_path( __FILE__ ) . 'partials/sollicitation-single.php';
+		// 	}
+		// }
+
+		return $single;
+
+	}//end function
+
+	public function fla_immo_title_filter($where, &$wp_query){
+		global $wpdb;
+	
+		if($search_term = $wp_query->get( 'search_title' )){
+			/*using the esc_like() in here instead of other esc_sql()*/
+			$search_term = $wpdb->esc_like($search_term);
+			$search_term = ' \'%' . $search_term . '%\'';
+			$where .= ' AND ' . $wpdb->posts . '.post_title LIKE '.$search_term;
+		}
+	
+		return $where;
+	}
 
 }

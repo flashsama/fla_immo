@@ -2,3 +2,33 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+.immosingle h1 {
+    margin: 58px 0;
+}
+
+.immosingle h2 {
+    font-size: 20px;
+    margin: 20px 0;
+}
+
+.immosingle h2>span {
+    color: #d46767;
+}
+
+.immosingle h2>em {
+    margin-left: 5px;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.immo_featured_img {
+    height: 550px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.card .card-image img {
+    height: 240px;
+}

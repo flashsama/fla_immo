@@ -181,6 +181,10 @@ class Fla_immo {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+		//filter
+		$this->loader->add_filter('single_template', $plugin_public, 'fla_immo_single_custom_post_template', 10, 3);
+		$this->loader->add_filter('posts_where', $plugin_public, 'fla_immo_title_filter', 10, 2);
+
 		//widgets shortcode
 		$this->loader->add_action( 'init', $plugin_public, 'fla_immo_register_shortcodes' );
 
