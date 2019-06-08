@@ -187,6 +187,15 @@ class Fla_immo {
 
 		//widgets shortcode
 		$this->loader->add_action( 'init', $plugin_public, 'fla_immo_register_shortcodes' );
+		//routing
+		$this->loader->add_action( 'template_include', $plugin_public, 'fla_immo_routing' );
+
+		//ajax hooks
+		$this->loader->add_action( 'wp_ajax_update_annonce_immo', $plugin_public, 'fla_immo_update_annonce_immo' );
+		$this->loader->add_action( 'wp_ajax_add_new_annonce_immo', $plugin_public, 'fla_immo_add_new_annonce_immo' );
+		$this->loader->add_action( 'wp_ajax_update_agence_immo', $plugin_public, 'fla_immo_update_agence_immo' );
+		$this->loader->add_action( 'wp_ajax_delete_offre_immo', $plugin_public, 'fla_immo_delete_offre_immo' );
+		$this->loader->add_action( 'wp_ajax_archive_offre_immo', $plugin_public, 'fla_immo_archive_offre_immo' );
 
 	}
 
