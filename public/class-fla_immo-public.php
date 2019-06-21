@@ -94,6 +94,31 @@ class Fla_immo_Public {
 
 	}
 
+	public function fla_immo_paginationtemplate($query)
+	{
+		?>
+			<div class="pagination">
+				<?php 
+					echo paginate_links( array(
+						'base'         => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
+						'total'        => $query->max_num_pages,
+						'current'      => max( 1, get_query_var( 'paged' ) ),
+						'format'       => '?paged=%#%',
+						'show_all'     => false,
+						'type'         => 'plain',
+						'end_size'     => 2,
+						'mid_size'     => 1,
+						'prev_next'    => true,
+						'prev_text'    => sprintf( '<i></i> %1$s', __( 'Précedent', 'text-domain' ) ),
+						'next_text'    => sprintf( '%1$s <i></i>', __( 'Suivant', 'text-domain' ) ),
+						'add_args'     => false,
+						'add_fragment' => '',
+					) );
+				?>
+			</div>
+		<?php
+	}
+
 	public function fla_immo_register_shortcodes()
 	{
 		add_shortcode( 'fl_offres_immo_recherche', array($this,'fla_immo_search_fillter_widget') );
@@ -188,12 +213,15 @@ class Fla_immo_Public {
 		$surface_max = isset($_GET['surface_max']) ? $_GET['surface_max'] : '';
 		$mots_cles = isset($_GET['mots_cles']) ? $_GET['mots_cles'] : '';
 		// WP_Query arguments
+		$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+
 		$args = array (
 			'post_type'              => array( 'fla_immo_offers' ),
 			'post_status'            => array( 'publish' ),
-			'nopaging'               => true,
 			'order'                  => 'ASC',
 			'orderby'                => 'menu_order',
+			'posts_per_page'         => 9,
+			'paged'                  => $paged
 		);
 
 		$metaquery_arr = array(
@@ -261,7 +289,6 @@ class Fla_immo_Public {
 		$idsOfFirstResult = array_map(function($p){
 			return $p->ID;
 		},$offres_immo->posts);
-		var_dump($idsOfFirstResult);
 
 		foreach ($offres_immo2->posts as $p) {
 			if (!in_array($p->ID,$idsOfFirstResult)) {
@@ -276,7 +303,7 @@ class Fla_immo_Public {
 		// The Loop
 		if ( $offres_immo->have_posts() ) {
 			//var_dump($emplois);
-			echo "<h3>Nombre de resulta : " . count($offres_immo->posts) . "</h3>"
+			echo "<h3>Nombre de resulta : " . ($offres_immo->found_posts) . "</h3>"
 			?>
 			<div class="result_container">
 				<?php
@@ -304,7 +331,9 @@ class Fla_immo_Public {
 				
 				<?php
 			}
-			?> </div> <?php
+			?> </div> 
+			<?php $this->fla_immo_paginationtemplate($offres_immo); ?>
+			<?php
 		} else {
 			// no posts found
 			echo '<h2>aucun resultat</h2>';
@@ -418,6 +447,7 @@ class Fla_immo_Public {
 		$num_mandat = (isset($_POST['num_mandat'])) ? $_POST['num_mandat'] : '';
 		$ref_interne = (isset($_POST['ref_interne'])) ? $_POST['ref_interne'] : '';
 		$annonce_img_id = (isset($_POST['annonce_img_id'])) ? $_POST['annonce_img_id'] : '';
+		$annonce_gallery = (isset($_POST['annonce_gallery'])) ? $_POST['annonce_gallery'] : '';
 
 	
 
@@ -473,6 +503,13 @@ class Fla_immo_Public {
 					$output->errorText .= 'can\'t update ' .$field_name.' ';
 				}
 			}
+
+			//$annonce_gallery
+			update_post_meta(
+				$annonceID,
+				'fla_immo_offer_gallery',
+				$annonce_gallery
+			);
 		}
 
 		echo  json_encode($output);
@@ -507,6 +544,7 @@ class Fla_immo_Public {
 		$ref_interne = (isset($_POST['ref_interne'])) ? $_POST['ref_interne'] : '';
 		$agence = (isset($_POST['agence'])) ? (int)$_POST['agence'] : '';
 		$annonce_img_id = (isset($_POST['annonce_img_id'])) ? $_POST['annonce_img_id'] : '';
+		$annonce_gallery = (isset($_POST['annonce_gallery'])) ? $_POST['annonce_gallery'] : '';
 
 
 		$annonce_fields_arr = array(
@@ -556,7 +594,14 @@ class Fla_immo_Public {
 				if (!$field_updated) {
 					$output->errorText .= 'can\'t update ' .$field_name.' ';
 				}
-			}
+			}//end foreach
+
+			//$annonce_gallery
+			update_post_meta(
+				$annonce_added,
+				'fla_immo_offer_gallery',
+				$annonce_gallery
+			);
 		}
 
 		$new_annonce_url = get_the_permalink( $annonce_added);
@@ -727,5 +772,8 @@ class Fla_immo_Public {
 		echo  json_encode($output);
 		wp_die();
 	}//end function
+
+	
+	
 
 }//end class

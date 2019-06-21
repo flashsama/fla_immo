@@ -169,6 +169,15 @@ get_header(); ?>
                         <label for="image">Photos</label>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <img id="annonce_img" width="100px" src="" />
+                        <input type="hidden" id="annonce_gallery_ids" value="0">
+                        <a class="btn-floating btn cyan" id="upload_annonce_gallery_btn"><i class="material-icons">edit</i></a>
+                        <span id="annonce_gallery_src"></span>
+                        <label for="image">Galerie</label>
+                    </div>
+                </div>
                 
                 <div class="row">
                     <div class="input-field col s12">

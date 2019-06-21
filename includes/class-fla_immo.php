@@ -163,6 +163,10 @@ class Fla_immo {
 		$this->loader->add_action( 'init', $plugin_admin, 'create_agence_immo_post_type' );
 		$this->loader->add_action( 'init', $plugin_admin, 'create_annonce_immo_post_type' );
 		$this->loader->add_action( 'init', $plugin_admin, 'generate_acf_for_agencies_and_annonces' );
+
+		//gallery pour les offres
+		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'fla_immo_add_custom_gallery_meta_box' );
+		$this->loader->add_action( 'save_post', $plugin_admin, 'fla_immo_save_gallery_meta_field' );
 		
 
 	}
@@ -196,6 +200,9 @@ class Fla_immo {
 		$this->loader->add_action( 'wp_ajax_update_agence_immo', $plugin_public, 'fla_immo_update_agence_immo' );
 		$this->loader->add_action( 'wp_ajax_delete_offre_immo', $plugin_public, 'fla_immo_delete_offre_immo' );
 		$this->loader->add_action( 'wp_ajax_archive_offre_immo', $plugin_public, 'fla_immo_archive_offre_immo' );
+		
+		
+
 
 	}
 

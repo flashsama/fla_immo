@@ -51,9 +51,10 @@
 			annonce_data.unite = $('#annonce_unite').val();
 			annonce_data.num_mandat = $('#annonce_numero_de_mandat').val();
 			annonce_data.ref_interne = $('#annonce_reference_interne').val();
+			annonce_data.annonce_gallery = $('#annonce_gallery_ids').val();
 			annonce_data.annonce_img_id = parseInt($('#annonce_img_id').val(),10);
 			annonce_data.commission = ($('#annonce_commission').prop('checked'))?1:0;
-
+			
 			$.ajax({
 				type : 'POST',
 				url  : ajax_front_obj.ajax_url+'?action=update_annonce_immo',
@@ -108,6 +109,7 @@
 			annonce_data.unite = $('#annonce_unite').val();
 			annonce_data.num_mandat = $('#annonce_numero_de_mandat').val();
 			annonce_data.ref_interne = $('#annonce_reference_interne').val();
+			annonce_data.annonce_gallery = $('#annonce_gallery_ids').val();
 			annonce_data.commission = ($('#annonce_commission').prop('checked'))?1:0;
 			annonce_data.annonce_img_id = parseInt($('#annonce_img_id').val(),10);
 
@@ -170,6 +172,56 @@
 				console.log(imgAttachement);
 				$('#annonce_img').prop('src', imgAttachement.url);
 				$('#annonce_img_id').val(imgAttachement.id);
+			});
+		 });//end click
+		 $('#upload_annonce_gallery_btn').click(function (e) {
+			e.preventDefault();
+
+			customUploader = wp.media({
+				title: 'Choisir les images de la galerie',
+				button : {
+					text : 'Selectioner'
+				},
+				multiple: true
+			});//custom uploader declaration
+
+			customUploader.on('open', function() {
+				var selection = customUploader.state().get('selection');
+				var library = customUploader.state('gallery-edit').get('library');
+				var ids = jQuery('#annonce_gallery_ids').val();
+				if (ids) {
+						var idsArray = ids.split(',');
+						idsArray.forEach(function(id) {
+								var attachment = wp.media.attachment(id);
+								attachment.fetch();
+								selection.add( attachment ? [ attachment ] : [] );
+						});
+			 }
+			});
+
+			if (customUploader) {
+				customUploader.open();
+			}
+
+			//add event listener when image selected from wp media popup
+			customUploader.on('select', function () {
+				var imgAttachements = customUploader.state().get('selection');//.toJSON();//.first()
+				console.log(imgAttachements);
+				var imageIDArray = [];
+				var imageHTML = '';
+				var metadataString = '';
+
+				imageHTML += '<ul class="gallery_list">';
+				imgAttachements.each(function(attachment) {
+						imageIDArray.push(attachment.attributes.id);
+						imageHTML += '<li><div class="shift8_portfolio_gallery_container"><span class="shift8_portfolio_gallery_close"><img id="'+attachment.attributes.id+'" src="'+attachment.attributes.sizes.thumbnail.url+'"></span></div></li>';
+				});
+				imageHTML += '</ul>';
+				metadataString = imageIDArray.join(",");
+				if (metadataString) {
+						jQuery("#annonce_gallery_ids").val(metadataString);
+						jQuery("#annonce_gallery_src").html(imageHTML);
+				}
 			});
 		 });//end click
 		 $('#upload_agence_vitrine_btn, #upload_agence_logo_btn').click(function (e) {

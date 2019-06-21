@@ -97,6 +97,8 @@ class Fla_immo_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/fla_immo-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_media();
+		wp_enqueue_script('media-upload');
 
 	}//end enqueue script
 
@@ -753,6 +755,81 @@ class Fla_immo_Admin {
 			endif;
 	}
 
+	//custom gallery
+	// Add the Meta Box
+	public function fla_immo_add_custom_gallery_meta_box() {
+		add_meta_box(
+			'fla_immo_gallery_meta_box', // $id
+			'Gallerie', // $title
+			'fla_immo_afficher_galleri_des_offres', // $callback
+			'fla_immo_offers', // $page
+			'normal', // $context
+			'high'); // $priority
 
+			
+			
+			
+			function fla_immo_afficher_galleri_des_offres($object)
+			{
+				// Field Array
+				$prefix = 'fla_immo_offer_';
+				$custom_meta_fields = array(
+					array(
+						'label'=> 'Gallerie des photos',
+						'desc'  => 'Gallerie photo à ajouter pour une offre immo.',
+						'id'    => $prefix.'gallery',
+						'type'  => 'gallery'
+					),
+				);
+				
+				global $post;
+				// Use nonce for verification
+				echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';
+		
+				// Begin the field table and loop
+				echo '<table class="form-table">';
+				foreach ($custom_meta_fields as $field) {
+						// get value of this field if it exists for this post
+						$meta = get_post_meta($post->ID, $field['id'], true);
+						var_dump($meta);
+						// begin a table row with
+						echo '<tr>
+						<th><label for="'.$field['id'].'">'.$field['label'].'</label></th>
+						<td>';
+						switch($field['type']) {
+								case 'gallery':
+								$close_button = '<i class="material-icons">clear</i>';
+								$meta_html = null;
+								if ($meta) {
+										$meta_html .= '<ul class="gallery_list">';
+										$meta_array = explode(',', $meta);
+										foreach ($meta_array as $meta_gall_item) {
+												$meta_html .= '<li><div class=""><span class="fla_immo_gallery_close"><img id="' . esc_attr($meta_gall_item) . '" src="' . wp_get_attachment_thumb_url($meta_gall_item) . '"></span></div></li>';
+										}
+										$meta_html .= '</ul>';
+								}
+								echo '<input id="fla_immo_gallery" type="hidden" name="fla_immo_gallery" value="' . esc_attr($meta) . '" />
+								<span id="fla_immo_gallery_src">' . $meta_html . '</span>
+								<div class="fla_immo_button_container"><input id="fla_immo_gallery_button" type="button" value="Ajouter Gallerie" /></div>';
+								break;
+						} //end switch
+						echo '</td></tr>';
+				} // end foreach
+				echo '</table>'; // end table
+			}
+	}//end function
 
-}
+	public function fla_immo_save_gallery_meta_field($postID)
+	{
+		if (array_key_exists('fla_immo_gallery', $_POST)) {
+			update_post_meta(
+				$postID,
+				'fla_immo_offer_gallery',
+				$_POST['fla_immo_gallery']
+			);
+		}
+	}
+
+	
+
+}//end class

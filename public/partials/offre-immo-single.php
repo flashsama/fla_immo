@@ -32,6 +32,23 @@ get_header(); ?>
         </div>
         <div class="immosingle">
             <div class="immo_featured_img" style="background-image:url(<?php echo get_field('gallerie')['url']; ?>);"></div>
+            <?php 
+            $gallerie_photos = get_post_meta(get_the_ID(), 'fla_immo_offer_gallery', true);
+            $photos_arr      = explode(',',$gallerie_photos);
+            var_dump($photos_arr);
+            ?>
+            <ul class="gallery_list">
+            <?php
+            foreach ($photos_arr as $photoid) {
+                 
+                ?>
+                
+                <li><a href="<?php echo wp_get_attachment_url($photoid);  ?>"><img src="<?php echo wp_get_attachment_thumb_url($photoid); ?>"></a></li>
+                <?php
+                
+            }
+            ?>
+            </ul>
             <h1><?php the_title(); ?></h1>
             <p><?php the_field('description'); ?></p>
             <h2>Type de transaction : <span><?php echo get_field('type_de_transaction')['label']; ?></span></h2>

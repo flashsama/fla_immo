@@ -171,6 +171,27 @@ get_header(); ?>
                         <label for="image">Photos</label>
                     </div>
                 </div>
+                <div class="row">
+                    <?php 
+                    $meta = get_post_meta($annonce_ID, 'fla_immo_offer_gallery', true);
+                    $meta_html = null;
+								if ($meta) {
+										$meta_html .= '<ul class="gallery_list">';
+										$meta_array = explode(',', $meta);
+										foreach ($meta_array as $meta_gall_item) {
+												$meta_html .= '<li><div class=""><span class="fla_immo_gallery_close"><img id="' . esc_attr($meta_gall_item) . '" src="' . wp_get_attachment_thumb_url($meta_gall_item) . '"></span></div></li>';
+										}
+										$meta_html .= '</ul>';
+								}
+                    ?>
+                    <div class="input-field col s12">
+                        <img id="annonce_img" width="100px" src="" />
+                        <input type="hidden" id="annonce_gallery_ids" value="<?php echo esc_attr($meta); ?>">
+                        <a class="btn-floating btn cyan" id="upload_annonce_gallery_btn"><i class="material-icons">edit</i></a>
+                        <span id="annonce_gallery_src"><?php echo $meta_html; ?></span>
+                        <label for="image">Galerie</label>
+                    </div>
+                </div>
 
                 
                 <div class="row">

@@ -32,3 +32,11 @@
 .card .card-image img {
     height: 240px;
 }
+
+ul.gallery_list {
+    display: flex;
+}
+
+ul.gallery_list>li {
+    margin-right: 5px;
+}
